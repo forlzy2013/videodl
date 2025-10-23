@@ -51,8 +51,14 @@ export class VideoMetadataService {
     try {
       const videoId = this.extractVideoId(url);
       
-      // Fetch video info using ytdl-core
-      const info = await ytdl.getInfo(url);
+      // Fetch video info using ytdl-core with options
+      const info = await ytdl.getInfo(url, {
+        requestOptions: {
+          headers: {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+          },
+        },
+      });
       
       // Extract relevant metadata
       const videoDetails = info.videoDetails;
@@ -85,6 +91,13 @@ export class VideoMetadataService {
 
       return metadata;
     } catch (error: any) {
+      // Log the actual error for debugging
+      console.error('ytdl-core error details:', {
+        message: error.message,
+        statusCode: error.statusCode,
+        stack: error.stack,
+      });
+
       // Handle specific error types
       if (error.message?.includes('Video unavailable')) {
         throw new Error('VIDEO_NOT_FOUND');
@@ -92,14 +105,18 @@ export class VideoMetadataService {
       if (error.message?.includes('INVALID_URL')) {
         throw new Error('INVALID_URL');
       }
-      if (error.message?.includes('429') || error.message?.includes('rate limit')) {
+      if (error.statusCode === 429 || error.message?.includes('429') || error.message?.includes('rate limit')) {
         throw new Error('RATE_LIMIT');
       }
-      if (error.message?.includes('ENOTFOUND') || error.message?.includes('network')) {
+      if (error.message?.includes('ENOTFOUND') || error.message?.includes('network') || error.message?.includes('ETIMEDOUT')) {
         throw new Error('NETWORK_ERROR');
       }
+      if (error.message?.includes('Sign in to confirm') || error.message?.includes('age')) {
+        throw new Error('VIDEO_NOT_FOUND');
+      }
       
-      // Generic error
+      // Generic error - include original message for debugging
+      console.error('Unhandled ytdl-core error:', error.message);
       throw new Error('UNKNOWN_ERROR');
     }
   }
