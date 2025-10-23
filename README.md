@@ -17,7 +17,7 @@ A modern, privacy-focused web application for downloading YouTube videos in MP4 
 - **Framework**: Next.js 14+ (App Router)
 - **Language**: TypeScript
 - **Styling**: Tailwind CSS
-- **Video Processing**: ytdl-core
+- **Video Processing**: @distube/ytdl-core (actively maintained fork)
 - **File Downloads**: FileSaver.js
 - **Deployment**: Replit
 
@@ -189,10 +189,24 @@ Contributions are welcome! Please follow these steps:
 
 This project is licensed under the MIT License.
 
+## Troubleshooting
+
+### "An unexpected error occurred" when analyzing videos
+
+If you encounter this error:
+1. Check the Replit console logs for detailed error messages
+2. Ensure you're using the latest version of `@distube/ytdl-core`
+3. Some videos may be restricted or require authentication
+4. Try a different video URL to verify the service is working
+
+### YouTube API Changes
+
+YouTube frequently updates their API, which can break video downloading libraries. This project uses `@distube/ytdl-core`, an actively maintained fork that's updated regularly to handle these changes.
+
 ## Acknowledgments
 
 - Built with [Next.js](https://nextjs.org/)
-- Video processing powered by [ytdl-core](https://github.com/fent/node-ytdl-core)
+- Video processing powered by [@distube/ytdl-core](https://github.com/distubejs/ytdl-core)
 - File downloads via [FileSaver.js](https://github.com/eligrey/FileSaver.js)
 - Design inspired by Apple's design principles
 
